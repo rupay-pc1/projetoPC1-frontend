@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/lib/components/ui/button";
 import LoginForm from "./components/LoginForm";
 
 export default function Login() {
