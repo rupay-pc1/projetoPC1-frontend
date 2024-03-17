@@ -8,42 +8,66 @@ import { Button } from "@/lib/components/ui/button";
 import { AuthContext } from '@/contexts/AuthContext'
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import AuthenticationService from "@/services/AuthenticationService"
+import { Toaster } from "@/lib/components/ui/toaster"
+import { useToast } from "@/lib/components/ui/use-toast"
 
 
 export default function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
-  const [form, setForm] = useState('')
   const [isLoading, setIsLoading] = useState(false);
   const { setAuth, auth } = useContext(AuthContext)
-  const [error, setError] = useState({hasError: false, errorMessage: ""})
+  const { toast } = useToast()
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
 
   const onSubmit = (event) => {
     event.preventDefault();
     setIsLoading(true);    
     setTimeout(() => {
-      setIsLoading(false);
-      if (form.email == 'arthur@gmail.com' && form.password == '123') {
-        setAuth(true)
-        navigate("/home");
-      } else {
-        setError({hasError: true, errorMessage: "Email ou Senha incorretos"})
-      }
-      setTimeout(() => {
-        setError({hasError: false, errorMessage: ""})
-      }, 2000);
-    }, 3000);
+      handleConfirm()
+    }, 2000);
   }
 
-  function handleChange(event) {
-    setForm({ ...form, [event.target.id]: event.target.value })
+  const handleConfirm = async () => {
+    try{
+      const payload = {
+        ...formData,
+      }
+      const response = await AuthenticationService.loginUser(payload);
+      setAuth(true)
+      localStorage.setItem('token', response.access_token);
+      redirecTo("/home")
+    }catch{
+      showErrorMessage("error", "Email ou Senha incorretos")
+    }finally {
+      setIsLoading(false);
+    }
   }
+
+  const showErrorMessage = (variant, message) => {
+    toast({
+      variant: variant,
+      description: message,
+    });
+  };
   
 
-  const handleClick = () => {
-    if (!isLoading) {
-      navigate('/register');
-    }
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
   };
+
+  const redirecTo = (url) => {
+    if (!isLoading) {
+      navigate(url);
+    }
+  }
 
   return(
     <div className={cn("grid gap-6", className)} {...props}>
@@ -85,20 +109,10 @@ export default function LoginForm({ className, ...props }) {
             Entrar
           </Button>
 
-          <Button disabled={isLoading} variant="outline" onClick={handleClick}>
+          <Button disabled={isLoading} variant="outline" onClick={() => redirecTo("/register")}>
             Criar minha conta
           </Button>
-
-          { error.hasError && 
-            
-            (<div className="absolute right-4 top-4 md:right-16 md:top-8">
-              <Alert variant="destructive">
-                <ExclamationTriangleIcon className="h-4 w-4" />
-                <AlertTitle>{error.errorMessage}</AlertTitle>
-              </Alert>
-            </div>)
-          }
-
+          <Toaster />
         </div>
       </form>
     </div>

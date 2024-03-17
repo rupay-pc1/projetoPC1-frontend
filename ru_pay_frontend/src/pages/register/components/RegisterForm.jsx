@@ -1,61 +1,127 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import UserTypeEnum from "@/enums/userTypeEnum"
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Label } from "@/lib/components/ui/label";
 import { Input } from "@/lib/components/ui/input";
 import { Button } from "@/lib/components/ui/button";
+import { useToast } from "@/lib/components/ui/use-toast"
+import { Toaster } from "@/lib/components/ui/toaster"
+import AuthenticationService from "@/services/AuthenticationService"
+import {  Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/lib/components/ui/select"
+import { User } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert"
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
 export default function RegisterForm({ className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    registration: "",
+    cpf: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
+  const [selectedValue, setSelectedValue] = useState(null);
+  // const [error, setError] = useState({hasError: false, errorMessage: ""})
+  const { toast } = useToast()
 
-  async function onSubmit(event) {
+  const handleValueChange = (value) => {
+    setSelectedValue(value);
+  };
+
+  const handleConfirm = async () => {
+    try {
+      const payload = {
+        ...formData,
+        "typeUser": selectedValue
+      }
+      const response = await AuthenticationService.registerUser(payload);
+      console.log(response.data)
+      showErrorMessage("success", "Cadastro realizado com sucesso!")
+    } catch (error) {
+      showErrorMessage("error", "Ocorreu um erro ao tentar realizar seu cadastro!")
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-
     setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }
+      handleConfirm();
+    }, 2000)
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const showErrorMessage = (variant, message) => {
+    toast({
+      variant: variant,
+      description: message,
+    });
+  };
+
+  // const validatePassword = () => {
+  //   let errorMessage = "";
+  //   let hasError = false;
+  //   let password = formData.password
+  //   let passwordConfirm = formData.passwordConfirm
+    
+  //   const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+  //   if (password !== passwordConfirm) {
+  //       errorMessage = "As senhas não coincidem.";
+  //       hasError = true
+  //   }
+  //   else if (password.length < 8) {
+  //       errorMessage = "A senha deve conter pelo menos 8 caracteres.";
+  //       hasError = true
+  //   }
+  //   else if (!re.test(password)) {
+  //       errorMessage = "A senha deve conter pelo menos um número, uma letra maiúscula, uma letra minúscula e um caractere especial.";
+  //       hasError = true
+  //   }
+  //   setError({hasError: hasError, errorMessage: errorMessage})
+  // }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label htmlFor="fullname">Nome Completo</Label>
             <Input
-              id="fullname"
+              id="name"
               placeholder="Fulano de Tal"
               type="text"
               autoCapitalize="none"
               autoComplete="name"
               autoCorrect="off"
               disabled={isLoading}
+              value={formData.fullname}
+              onChange={handleChange}
             />
           </div>
           <div className="grid gap-1">
             <Label htmlFor="matricula">Matrícula</Label>
             <Input
-              id="matricula"
+              id="registration"
               placeholder="000000000"
               type="text"
               autoCapitalize="none"
               autoComplete="matricula"
               autoCorrect="off"
               disabled={isLoading}
-            />
-          </div>
-          <div className="grid gap-1">
-            <Label htmlFor="cpf">CPF</Label>
-            <Input
-              id="cpf"
-              placeholder="000.000.000-00"
-              type="text"
-              autoCapitalize="none"
-              autoComplete="cpf"
-              autoCorrect="off"
-              disabled={isLoading}
+              value={formData.matricula}
+              onChange={handleChange}
             />
           </div>
           <div className="grid gap-1">
@@ -68,6 +134,8 @@ export default function RegisterForm({ className, ...props }) {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
           <div className="grid gap-1">
@@ -80,26 +148,52 @@ export default function RegisterForm({ className, ...props }) {
               autoComplete="off"
               autoCorrect="off"
               disabled={isLoading}
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
           <div className="grid gap-1">
             <Label htmlFor="password_confirm">Confirme sua senha</Label>
             <Input
-              id="password_confirm"
+              id="passwordConfirm"
               placeholder="**********"
               type="password"
               autoCapitalize="none"
               autoComplete="off"
               autoCorrect="off"
               disabled={isLoading}
+              value={formData.passwordConfirm}
+              onChange={handleChange}
             />
           </div>
-          <Button disabled={isLoading}>
+          {/* { error.hasError && 
+              <Alert variant="">
+                <ExclamationTriangleIcon className="h-4 w-4" />
+                <AlertTitle>{error.errorMessage}</AlertTitle>
+              </Alert>
+          } */}
+          <div>
+          <Label htmlFor="password_confirm">Tipo de Usuário</Label>
+          <Select onValueChange={handleValueChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Selecionar" />
+            </SelectTrigger>
+            
+            <SelectContent>
+              <SelectItem value={UserTypeEnum.EXTERNAL}>Externo</SelectItem>
+              <SelectItem value={UserTypeEnum.STUDENT}>Estudante</SelectItem>
+              <SelectItem value={UserTypeEnum.SCHOLARSHIP_STUDENT}>Estudante Bolsista</SelectItem>
+              <SelectItem value={UserTypeEnum.ADMIN}>Admin</SelectItem>
+            </SelectContent>
+          </Select>
+          </div>
+          <Button disabled={isLoading} onClick={onSubmit}>
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Cadastrar
           </Button>
+          <Toaster />
         </div>
       </form>
     </div>
