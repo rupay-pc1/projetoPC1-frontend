@@ -1,51 +1,51 @@
 import { useState, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Label } from "@/lib/components/ui/label";
 import { Input } from "@/lib/components/ui/input";
 import { Button } from "@/lib/components/ui/button";
-import { AuthContext } from '@/contexts/AuthContext'
-import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert"
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
-import AuthenticationService from "@/services/AuthenticationService"
-import { Toaster } from "@/lib/components/ui/toaster"
-import { useToast } from "@/lib/components/ui/use-toast"
-
+import { AuthContext } from "@/contexts/AuthContext";
+import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import AuthenticationService from "@/services/AuthenticationService";
+import { Toaster } from "@/lib/components/ui/toaster";
+import { useToast } from "@/lib/components/ui/use-toast";
 
 export default function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { setAuth, auth } = useContext(AuthContext)
-  const { toast } = useToast()
+  const { setAuth, auth } = useContext(AuthContext);
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
+  });
 
   const onSubmit = (event) => {
     event.preventDefault();
-    setIsLoading(true);    
+    setIsLoading(true);
     setTimeout(() => {
-      handleConfirm()
+      handleConfirm();
     }, 2000);
-  }
+  };
 
   const handleConfirm = async () => {
-    try{
+    try {
       const payload = {
         ...formData,
-      }
+      };
       const response = await AuthenticationService.loginUser(payload);
-      setAuth(true)
-      localStorage.setItem('token', response.access_token);
-      redirecTo("/home")
-    }catch{
-      showErrorMessage("error", "Email ou Senha incorretos")
-    }finally {
+      setAuth(true);
+
+      localStorage.setItem("token", response.access_token);
+      redirecTo("/");
+    } catch {
+      showErrorMessage("error", "Email ou Senha incorretos");
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const showErrorMessage = (variant, message) => {
     toast({
@@ -53,7 +53,6 @@ export default function LoginForm({ className, ...props }) {
       description: message,
     });
   };
-  
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -67,9 +66,9 @@ export default function LoginForm({ className, ...props }) {
     if (!isLoading) {
       navigate(url);
     }
-  }
+  };
 
-  return(
+  return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form>
         <div className="grid gap-2">
@@ -88,7 +87,7 @@ export default function LoginForm({ className, ...props }) {
           </div>
 
           <div className="grid gap-1">
-          <Label htmlFor="password">Senha</Label>
+            <Label htmlFor="password">Senha</Label>
             <Input
               id="password"
               placeholder="**********"
@@ -99,7 +98,6 @@ export default function LoginForm({ className, ...props }) {
               disabled={isLoading}
               onChange={handleChange}
             />
-
           </div>
 
           <Button disabled={isLoading} onClick={onSubmit}>
@@ -109,7 +107,11 @@ export default function LoginForm({ className, ...props }) {
             Entrar
           </Button>
 
-          <Button disabled={isLoading} variant="outline" onClick={() => redirecTo("/register")}>
+          <Button
+            disabled={isLoading}
+            variant="outline"
+            onClick={() => redirecTo("/register")}
+          >
             Criar minha conta
           </Button>
           <Toaster />

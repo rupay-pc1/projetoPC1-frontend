@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
-import UserTypeEnum from "@/enums/userTypeEnum"
+import UserTypeEnum from "@/enums/userTypeEnum";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Label } from "@/lib/components/ui/label";
 import { Input } from "@/lib/components/ui/input";
 import { Button } from "@/lib/components/ui/button";
-import { useToast } from "@/lib/components/ui/use-toast"
-import { Toaster } from "@/lib/components/ui/toaster"
-import AuthenticationService from "@/services/AuthenticationService"
-import {  Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/lib/components/ui/select"
-import { User } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert"
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/lib/components/ui/use-toast";
+import { Toaster } from "@/lib/components/ui/toaster";
+import AuthenticationService from "@/services/AuthenticationService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm({ className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     registration: "",
@@ -25,7 +30,7 @@ export default function RegisterForm({ className, ...props }) {
   });
   const [selectedValue, setSelectedValue] = useState(null);
   // const [error, setError] = useState({hasError: false, errorMessage: ""})
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleValueChange = (value) => {
     setSelectedValue(value);
@@ -35,13 +40,16 @@ export default function RegisterForm({ className, ...props }) {
     try {
       const payload = {
         ...formData,
-        "typeUser": selectedValue
-      }
+        typeUser: selectedValue,
+      };
       const response = await AuthenticationService.registerUser(payload);
-      console.log(response.data)
-      showErrorMessage("success", "Cadastro realizado com sucesso!")
+      showErrorMessage("success", "Cadastro realizado com sucesso!");
+      redirecTo("/login");
     } catch (error) {
-      showErrorMessage("error", "Ocorreu um erro ao tentar realizar seu cadastro!")
+      showErrorMessage(
+        "error",
+        "Ocorreu um erro ao tentar realizar seu cadastro!",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +60,13 @@ export default function RegisterForm({ className, ...props }) {
     setIsLoading(true);
     setTimeout(() => {
       handleConfirm();
-    }, 2000)
+    }, 2000);
+  };
+
+  const redirecTo = (url) => {
+    if (!isLoading) {
+      navigate(url);
+    }
   };
 
   const handleChange = (e) => {
@@ -75,7 +89,7 @@ export default function RegisterForm({ className, ...props }) {
   //   let hasError = false;
   //   let password = formData.password
   //   let passwordConfirm = formData.passwordConfirm
-    
+
   //   const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
   //   if (password !== passwordConfirm) {
   //       errorMessage = "As senhas não coincidem.";
@@ -173,19 +187,21 @@ export default function RegisterForm({ className, ...props }) {
               </Alert>
           } */}
           <div>
-          <Label htmlFor="password_confirm">Tipo de Usuário</Label>
-          <Select onValueChange={handleValueChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Selecionar" />
-            </SelectTrigger>
-            
-            <SelectContent>
-              <SelectItem value={UserTypeEnum.EXTERNAL}>Externo</SelectItem>
-              <SelectItem value={UserTypeEnum.STUDENT}>Estudante</SelectItem>
-              <SelectItem value={UserTypeEnum.SCHOLARSHIP_STUDENT}>Estudante Bolsista</SelectItem>
-              <SelectItem value={UserTypeEnum.ADMIN}>Admin</SelectItem>
-            </SelectContent>
-          </Select>
+            <Label htmlFor="password_confirm">Tipo de Usuário</Label>
+            <Select onValueChange={handleValueChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecionar" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value={UserTypeEnum.EXTERNAL}>Externo</SelectItem>
+                <SelectItem value={UserTypeEnum.STUDENT}>Estudante</SelectItem>
+                <SelectItem value={UserTypeEnum.SCHOLARSHIP_STUDENT}>
+                  Estudante Bolsista
+                </SelectItem>
+                <SelectItem value={UserTypeEnum.ADMIN}>Admin</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Button disabled={isLoading} onClick={onSubmit}>
             {isLoading && (
