@@ -6,14 +6,16 @@ import AdminPrivateRoutes from "@/routes/admin/admin.private.routes";
 import { AuthContext } from "@/contexts/AuthContext";
 
 function App() {
-  const { auth, adminAuth } = useContext(AuthContext);
-  
-  if (auth){
-    return <PrivateRoutes />
-  } else if (!adminAuth) {
-    return <PublicRoutes />;
+  const { auth, user } = useContext(AuthContext);
+
+  if (auth) {
+    if (user?.typeUser === "ADMIN") {
+      return <AdminPrivateRoutes />;
+    }
+
+    return <PrivateRoutes />;
   } else {
-    return <AdminPrivateRoutes />
+    return <PublicRoutes />;
   }
 }
 

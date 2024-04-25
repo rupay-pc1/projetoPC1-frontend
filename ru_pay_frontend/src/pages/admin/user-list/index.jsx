@@ -19,57 +19,53 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/lib/components/ui/alert-dialog"
-
-
+} from "@/lib/components/ui/alert-dialog";
 
 export default function UserList() {
+  const [tableContent, setTableContent] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const [tableContent, setTableContent] = useState([])
-  const [modalOpen, setModalOpen] = useState(false)
-
-  useEffect(async () => {
+  useEffect(() => {
     async function fetchData() {
       try {
         const response = await AdminService.listUsers();
-        console.log(response)
-        return response
+        console.log(response);
+
+        setTableContent(response);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    } 
-    
-    setTableContent(await fetchData());
-  }, []); 
+    }
+
+    fetchData();
+  }, []);
 
   const normalizeTableContent = () => {
-    console.log(tableContent)
+    console.log(tableContent);
     if (tableContent.length == 0) {
-      return []
-      
+      return [];
     }
-    console.log(tableContent)
+    console.log(tableContent);
     const res = tableContent.map((client) => {
       return {
-        "id": client.id,
-        "name": client.name,
-        "email": client.email,
-        "type": client.typeUser,
-        "registration": client.registration,
-        "created_at": "20-03-2023"
-      }
-    })
+        id: client.id,
+        name: client.name,
+        email: client.email,
+        type: client.typeUser,
+        registration: client.registration,
+        created_at: "20-03-2023",
+      };
+    });
 
-    return res
-  }
+    return res;
+  };
 
-    const handleClick = async (clientId) => {
-      console.log(clientId)
-      const res = await AdminService.getUserById(clientId)
-      setModalOpen(true)
-      console.log(res)
-    }
-
+  const handleClick = async (clientId) => {
+    console.log(clientId);
+    const res = await AdminService.getUserById(clientId);
+    setModalOpen(true);
+    console.log(res);
+  };
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -92,37 +88,51 @@ export default function UserList() {
 
           <TableBody>
             {normalizeTableContent().map((client) => (
-              <TableRow key={client.id} className="bg-accent cursor-pointer" onClick={() => handleClick(client.id)}>
+              <TableRow
+                key={client.id}
+                className="bg-accent cursor-pointer"
+                onClick={() => handleClick(client.id)}
+              >
                 <TableCell>
                   <div className="font-medium">{client.name}</div>
                   <div className="hidden text-sm text-muted-foreground md:inline">
                     {client.email}
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">{client.type}</TableCell>
-                <TableCell className="hidden md:table-cell">{client.created_at}</TableCell>
-                <TableCell className="text-right">{client.registration}</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  {client.type}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {client.created_at}
+                </TableCell>
+                <TableCell className="text-right">
+                  {client.registration}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
 
-          
           <AlertDialog open={modalOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Você deseja deletar esse usuário ? </AlertDialogTitle>
+                <AlertDialogTitle>
+                  Você deseja deletar esse usuário ?{" "}
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                Esta ação é permanente e não poderá ser desfeita.
+                  Esta ação é permanente e não poderá ser desfeita.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => setModalOpen(false)}> Cancelar </AlertDialogCancel>
-                <AlertDialogAction onClick={() => setModalOpen(false)}>Confirmar Exclusão</AlertDialogAction>
+                <AlertDialogCancel onClick={() => setModalOpen(false)}>
+                  {" "}
+                  Cancelar{" "}
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => setModalOpen(false)}>
+                  Confirmar Exclusão
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
-
         </Table>
       </div>
     </main>

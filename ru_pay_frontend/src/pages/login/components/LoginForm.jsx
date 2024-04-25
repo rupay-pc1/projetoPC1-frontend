@@ -11,11 +11,12 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import AuthenticationService from "@/services/AuthenticationService";
 import { Toaster } from "@/lib/components/ui/toaster";
 import { useToast } from "@/lib/components/ui/use-toast";
+import UserService from "@/services/UserService";
 
 export default function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { setAuth, auth } = useContext(AuthContext);
+  const { setAuth, setUser } = useContext(AuthContext);
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
@@ -39,6 +40,18 @@ export default function LoginForm({ className, ...props }) {
       setAuth(true);
 
       localStorage.setItem("token", response.access_token);
+
+      if (response.access_token) {
+        const { id, email, name, registration, typeUser } =
+          await UserService.getUserInfo(payload.email);
+
+        const user = { id, email, name, registration, typeUser };
+
+        localStorage.setItem("userInfo", JSON.stringify(user));
+
+        setUser(user);
+      }
+
       redirecTo("/");
     } catch {
       showErrorMessage("error", "Email ou Senha incorretos");

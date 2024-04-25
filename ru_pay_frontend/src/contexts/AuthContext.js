@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 
 function AuthProvider({ children }) {
   const [auth, setAuth] = useState(null);
-  const [adminAuth, setAdminAuth] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,18 +15,18 @@ function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("tokenAdmin");
-    setAdminAuth(!!token);
-  }, []); 
+    const user = localStorage.getItem("userInfo");
+    setUser(JSON.parse(user));
+  }, []);
 
   useEffect(() => {
-    if (auth !== null || adminAuth !== null) {
+    if (auth !== null) {
       setIsLoading(false);
     }
-  }, [auth, adminAuth]);
+  }, [auth]);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, adminAuth, setAdminAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, user, setUser }}>
       {isLoading ? (
         <Icons.Spinner
           className="size-40 m-auto animate-spin h-screen"

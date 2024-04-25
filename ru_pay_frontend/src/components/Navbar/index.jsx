@@ -20,8 +20,26 @@ import {
   DropdownMenuTrigger,
 } from "@/lib/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/lib/components/ui/sheet";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useLocation } from "react-router-dom";
 
 export default function Navbar({ children }) {
+  const { setAuth, setUser } = useContext(AuthContext);
+
+  async function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    setUser(null);
+    setAuth(false);
+  }
+
+  const location = useLocation();
+
+  function getClassToActivePage(pathname) {
+    return location.pathname === pathname ? "text-primary bg-muted" : "";
+  }
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -36,17 +54,17 @@ export default function Navbar({ children }) {
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               <a
                 href="/"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${getClassToActivePage("/")}`}
               >
                 <HomeIcon className="h-4 w-4" />
                 Home
               </a>
               <a
-                href="/history"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                href="/my-tickets"
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${getClassToActivePage("/my-tickets")}`}
               >
                 <ShoppingCart className="h-4 w-4" />
-                Histórico de Compras
+                Meus Tickets
               </a>
             </nav>
           </div>
@@ -108,7 +126,9 @@ export default function Navbar({ children }) {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleLogout()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

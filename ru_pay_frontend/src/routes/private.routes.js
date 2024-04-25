@@ -2,7 +2,7 @@ import * as React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Home from "@/pages/home";
 import Navbar from "@/components/Navbar";
-import PurchaseHistory from "@/pages/purchase-history";
+import MyTickets from "@/pages/my-tickets";
 
 const PrivateRoutes = () => {
   return (
@@ -10,7 +10,7 @@ const PrivateRoutes = () => {
       <Navbar>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/history" element={<PurchaseHistory />} />
+          <Route path="/my-tickets" element={<MyTickets />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Navbar>
