@@ -30,7 +30,6 @@ export default function QrCodeValidation() {
   }, []);
 
   const openScanner = () => {
-    if (modalOpen) return;
     const defaultCameraId = 'your_camera_id_here';
 
     const config = {
@@ -52,13 +51,10 @@ export default function QrCodeValidation() {
   }
 
   function success(result) {
-    setTimeout(() => {
-      if (modalOpen) return
-      setScanResult(result);
-      getInfoTicket(result)
-      closeScanner(); 
-      setModalOpen(true)
-    }, 1000)
+    setScanResult(result);
+    getInfoTicket(result)
+    closeScanner(); 
+    // setModalOpen(true)
   }
 
   function error(err) {
