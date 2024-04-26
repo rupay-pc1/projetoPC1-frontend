@@ -3,7 +3,7 @@ import apiService from "./ApiService";
 const PaymentService = {
   async makePayment({ userId, ticketType }) {
     try {
-      const response = await apiService.post(
+      const response = await apiService.get(
         `api/payment/checkout/${userId}/${ticketType}`,
       );
       return response.data;
