@@ -51,7 +51,7 @@ export default function QrCodeValidation() {
   }
 
   function success(result) {
-    console.log("deploy v2")
+    console.log("deploy v3")
     if (result !== scanResult) {
       setScanResult(result);
       getInfoTicket(result);
@@ -120,7 +120,7 @@ export default function QrCodeValidation() {
           <div className="flex flex-col items-center mt-4">
             <div className="w-full max-w-md">
               <div>
-                <div id="reader"></div>
+                {scanResult ? <> ESTOU AQUI </> : <div id="reader"></div>}
               </div>
             </div>
           </div>
