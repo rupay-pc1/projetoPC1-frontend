@@ -54,27 +54,20 @@ export default function QrCodeValidation() {
     setScanResult(result);
     scanner.clear()
     getInfoTicket(result)
-    // closeScanner(); 
-    setModalOpen(true)
   }
 
   function error(err) {
     console.log(err);
   }
 
-  function closeScanner() {
-    const scannerContainer = document.getElementById('reader');
-    if (scannerContainer) {
-      scannerContainer.innerHTML = '';
-    }
-  }
-
   const getInfoTicket = async (result) => {
     try {
       const response = await AdminService.consultTicketById(result);
+      console.log(response)
       setTicketInfo(response)
-    console.log(response)
+      setModalOpen(true)
     } catch(error){
+      showErrorMessage("success", "QR Code nao pertence a um ticket valido!");
     }
   }
 
@@ -130,11 +123,11 @@ export default function QrCodeValidation() {
                   <AlertDialogTitle>
                     Informações do ticket lido:
                   </AlertDialogTitle>
-                <div className='flex flex-col gap-4'>
-                  <span> Preço: {ticketInfo.price} </span>
-                  <span> Status: {ticketInfo.statusTicket} </span>
-                  <span> Tipo Ticket: {ticketInfo.typeTicket} </span>
-                </div>
+                  <div className='flex flex-col gap-4'>
+                    <span> Preço: {ticketInfo.price} </span>
+                    <span> Status: {ticketInfo.statusTicket} </span>
+                    <span> Tipo Ticket: {ticketInfo.typeTicket} </span>
+                  </div>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                 <Button disabled={isLoading} onClick={handleCancel} variant="outline">
