@@ -51,11 +51,15 @@ export default function QrCodeValidation() {
   }
 
   function success(result) {
-    setScanResult(result);
-    getInfoTicket(result)
-    closeScanner(); 
-    // setModalOpen(true)
+    console.log("deploy v2")
+    if (result !== scanResult) {
+      setScanResult(result);
+      getInfoTicket(result);
+      closeScanner();
+      // setModalOpen(true)
+    }
   }
+  
 
   function error(err) {
     console.log(err);
