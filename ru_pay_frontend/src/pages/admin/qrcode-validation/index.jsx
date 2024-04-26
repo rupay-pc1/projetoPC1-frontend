@@ -52,6 +52,7 @@ export default function QrCodeValidation() {
   }
 
   function success(result) {
+    if (modalOpen) return
     setScanResult(result);
     getInfoTicket(result)
     closeScanner(); 
@@ -117,7 +118,7 @@ export default function QrCodeValidation() {
           <div className="flex flex-col items-center mt-4">
             <div className="w-full max-w-md">
               <div>
-               <div id="reader"></div>
+                <div id="reader"></div>
               </div>
             </div>
           </div>
