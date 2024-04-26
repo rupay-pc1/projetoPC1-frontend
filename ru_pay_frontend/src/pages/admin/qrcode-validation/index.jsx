@@ -116,7 +116,7 @@ export default function QrCodeValidation() {
           <div className="flex flex-col items-center mt-4">
             <div className="w-full max-w-md">
               <div>
-                <div id="reader"></div>
+                {scanResult && <div id="reader"></div>}
               </div>
             </div>
           </div>
