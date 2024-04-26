@@ -23,7 +23,7 @@ export default function QrCodeValidation() {
   const [ticketInfo, setTicketInfo] = useState({})
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-
+  let scanner;
 
   useEffect(() => {
     openScanner()
@@ -41,7 +41,7 @@ export default function QrCodeValidation() {
       cameraId: defaultCameraId,
     };
 
-    const scanner = new Html5QrcodeScanner('reader', config);
+    scanner = new Html5QrcodeScanner('reader', config);
 
     scanner.render(success, error);
 
@@ -52,8 +52,9 @@ export default function QrCodeValidation() {
 
   function success(result) {
     setScanResult(result);
+    scanner.clear()
     getInfoTicket(result)
-    closeScanner(); 
+    // closeScanner(); 
     setModalOpen(true)
   }
 
