@@ -14,12 +14,15 @@ import {
 import AdminService from "@/services/AdminService";
 import { Toaster } from "@/lib/components/ui/toaster";
 import { useToast } from "@/lib/components/ui/use-toast";
+import { Button } from "@/lib/components/ui/button";
+import { Icons } from "@/components/icons";
 
 export default function QrCodeValidation() {
   const [scanResult, setScanResult] = useState(null);
   const [modalOpen, setModalOpen] = useState(false)
   const [ticketInfo, setTicketInfo] = useState({})
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
 
   useEffect(() => {
@@ -76,13 +79,15 @@ export default function QrCodeValidation() {
 
   const updateTicketStatusToInactive = async () => {
     try {
-      console.log(ticketInfo.id)
-      const response = await AdminService.updateTicketStatusToInactive(ticketInfo.id);
-      console.log(response)
+      setIsLoading(true)
+      await AdminService.updateTicketStatusToInactive(ticketInfo.id);
+      setIsLoading(false)
       openScanner()
       setModalOpen(false)
       showErrorMessage("success", "Ação realizada com sucesso!");
     } catch(error) {
+      setIsLoading(false)
+      showErrorMessage("error", "Ocorreu um erro inesperado!");
       console.log(error)
     }
   }
@@ -93,6 +98,11 @@ export default function QrCodeValidation() {
       description: message,
     });
   };
+
+  const handleCancel = () => {
+    openScanner()
+    setModalOpen(false)
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -126,15 +136,16 @@ export default function QrCodeValidation() {
                 </div>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => {
-                    openScanner()
-                    setModalOpen(false)
-                    }}>
-                    Cancelar
-                  </AlertDialogCancel>
-                  <AlertDialogAction onClick={() => updateTicketStatusToInactive()}>
-                    Marcar como utilizado
-                  </AlertDialogAction>
+                <Button disabled={isLoading} onClick={handleCancel} variant="outline">
+                  Cancelar
+                </Button>
+
+                <Button disabled={isLoading} onClick={updateTicketStatusToInactive}>
+                  {isLoading && (
+                    <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Marcar como utilizado
+                </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
