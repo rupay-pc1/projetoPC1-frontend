@@ -30,6 +30,7 @@ export default function QrCodeValidation() {
   }, []);
 
   const openScanner = () => {
+    if (modalOpen) return;
     const defaultCameraId = 'your_camera_id_here';
 
     const config = {
@@ -116,7 +117,7 @@ export default function QrCodeValidation() {
           <div className="flex flex-col items-center mt-4">
             <div className="w-full max-w-md">
               <div>
-                {scanResult && <div id="reader"></div>}
+               <div id="reader"></div>
               </div>
             </div>
           </div>
