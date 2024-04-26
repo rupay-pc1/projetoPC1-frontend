@@ -52,11 +52,13 @@ export default function QrCodeValidation() {
   }
 
   function success(result) {
-    if (modalOpen) return
-    setScanResult(result);
-    getInfoTicket(result)
-    closeScanner(); 
-    setModalOpen(true)
+    setTimeout(() => {
+      if (modalOpen) return
+      setScanResult(result);
+      getInfoTicket(result)
+      closeScanner(); 
+      setModalOpen(true)
+    }, 1000)
   }
 
   function error(err) {

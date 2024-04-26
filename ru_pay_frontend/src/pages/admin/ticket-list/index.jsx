@@ -41,14 +41,6 @@ export default function TicketList() {
     setTableContent(await fetchData());
   }, []); 
 
-    const handleClick = async (clientId) => {
-      console.log(clientId)
-      const res = await AdminService.consultTicketById(clientId)
-      setModalOpen(true)
-      console.log(res)
-    }
-
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex flex-col gap-2">
