@@ -18,6 +18,14 @@ export default function Home() {
     setPayment(response.urlPayment);
   }
 
+  function getUserType(userType) {
+    return {
+      STUDENT: "STUDENT",
+      SCHOLARSHIP_STUDENT: "SCHOLARSHIP",
+      EXTERNAL: "EXTERNAL",
+    }[userType];
+  }
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -37,7 +45,9 @@ export default function Home() {
             <div className="grid grid-cols-2 md:gap-20 sm:gap-10 gap-5">
               <button
                 className="flex flex-col gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
-                onClick={() => buyTicket(`${user.typeUser}_LUNCH_TICKET`)}
+                onClick={() =>
+                  buyTicket(`${getUserType(user.typeUser)}_LUNCH_TICKET`)
+                }
               >
                 <img
                   alt="Almoço"
@@ -50,7 +60,9 @@ export default function Home() {
               </button>
               <button
                 className="flex flex-col gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
-                onClick={() => buyTicket(`${user.typeUser}_DINNER_TICKET`)}
+                onClick={() =>
+                  buyTicket(`${getUserType(user.typeUser)}_DINNER_TICKET`)
+                }
               >
                 <img
                   alt="Jantar"

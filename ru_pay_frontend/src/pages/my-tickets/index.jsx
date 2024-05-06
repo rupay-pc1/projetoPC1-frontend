@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/lib/components/ui/table";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate, orderByDate } from "@/lib/utils";
 import UserService from "@/services/UserService";
 import { useContext, useEffect, useState } from "react";
 import QRCodeDialog from "./components/QRCodeDialog";
@@ -24,7 +24,7 @@ export default function MyTickets() {
     (async () => {
       const response = await UserService.getTickets(user.id);
 
-      setTickets(response);
+      setTickets(orderByDate(response));
     })();
   }, [user.id]);
 
@@ -40,6 +40,7 @@ export default function MyTickets() {
               <TableHead>Tipo</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Preço</TableHead>
+              <TableHead className="text-right">Data de Compra</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -59,6 +60,11 @@ export default function MyTickets() {
                 </TableCell>
                 <TableCell className="text-right">
                   {formatCurrency(ticket.price)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {ticket.purchaseDate
+                    ? formatDate(new Date(ticket.purchaseDate))
+                    : null}
                 </TableCell>
                 <TableCell className="text-right">
                   <QRCodeDialog
