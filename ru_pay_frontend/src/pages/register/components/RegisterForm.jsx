@@ -125,20 +125,6 @@ export default function RegisterForm({ className, ...props }) {
             />
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="matricula">Matrícula</Label>
-            <Input
-              id="registration"
-              placeholder="000000000"
-              type="text"
-              autoCapitalize="none"
-              autoComplete="matricula"
-              autoCorrect="off"
-              disabled={isLoading}
-              value={formData.matricula}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="grid gap-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -199,10 +185,28 @@ export default function RegisterForm({ className, ...props }) {
                 <SelectItem value={UserTypeEnum.SCHOLARSHIP_STUDENT}>
                   Estudante Bolsista
                 </SelectItem>
-                <SelectItem value={UserTypeEnum.ADMIN}>Admin</SelectItem>
+                {/* <SelectItem value={UserTypeEnum.ADMIN}>Admin</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
+          {[UserTypeEnum.STUDENT, UserTypeEnum.SCHOLARSHIP_STUDENT].includes(
+            selectedValue,
+          ) ? (
+            <div className="grid gap-1">
+              <Label htmlFor="matricula">Matrícula</Label>
+              <Input
+                id="registration"
+                placeholder="000000000"
+                type="text"
+                autoCapitalize="none"
+                autoComplete="matricula"
+                autoCorrect="off"
+                disabled={isLoading}
+                value={formData.matricula}
+                onChange={handleChange}
+              />
+            </div>
+          ) : null}
           <Button disabled={isLoading} onClick={onSubmit}>
             {isLoading && (
               <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />

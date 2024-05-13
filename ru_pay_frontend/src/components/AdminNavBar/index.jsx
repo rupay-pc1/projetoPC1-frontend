@@ -1,12 +1,9 @@
 import {
-  Bell,
   CircleUser,
   HomeIcon,
-  LineChart,
   Menu,
   Package,
   Package2,
-  ShoppingCart,
   Users,
 } from "lucide-react";
 
@@ -15,17 +12,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/lib/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/lib/components/ui/sheet";
 import { AuthContext } from "@/contexts/AuthContext";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function AdminNavbar({ children, currentPath }) {
-  const { setAdminAuth, authAdmin } = useContext(AuthContext);
   const { pathname } = useLocation();
   const { setAuth, setUser } = useContext(AuthContext);
 
@@ -142,11 +136,6 @@ export default function AdminNavbar({ children, currentPath }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

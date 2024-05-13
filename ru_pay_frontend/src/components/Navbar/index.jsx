@@ -1,13 +1,9 @@
 import {
-  Bell,
   CircleUser,
   HomeIcon,
-  LineChart,
   Menu,
-  Package,
   Package2,
   ShoppingCart,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/lib/components/ui/button";
@@ -15,8 +11,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/lib/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/lib/components/ui/sheet";
@@ -121,11 +115,6 @@ export default function Navbar({ children }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleLogout()}>
                 Logout
               </DropdownMenuItem>

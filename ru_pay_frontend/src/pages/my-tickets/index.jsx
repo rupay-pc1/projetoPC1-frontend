@@ -13,7 +13,6 @@ import { formatCurrency, formatDate, orderByDate } from "@/lib/utils";
 import UserService from "@/services/UserService";
 import { useContext, useEffect, useState } from "react";
 import QRCodeDialog from "./components/QRCodeDialog";
-import { DrawerTrigger } from "@/lib/components/ui/drawer";
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -27,6 +26,20 @@ export default function MyTickets() {
       setTickets(orderByDate(response));
     })();
   }, [user.id]);
+
+  function getMealType(key) {
+    if (
+      [
+        "STUDENT_DINNER_TICKET",
+        "EXTERNAL_DINNER_TICKET",
+        "SCHOLARSHIP_DINNER_TICKET",
+      ].includes(key)
+    ) {
+      return "Jantar";
+    }
+
+    return "Almoço";
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -47,7 +60,7 @@ export default function MyTickets() {
           <TableBody>
             {tickets.map((ticket) => (
               <TableRow className="hover:bg-accent">
-                <TableCell>{ticket.typeTicket}</TableCell>
+                <TableCell>{getMealType(ticket.typeTicket)}</TableCell>
                 <TableCell>
                   <Badge
                     className="text-xs"
@@ -67,10 +80,12 @@ export default function MyTickets() {
                     : null}
                 </TableCell>
                 <TableCell className="text-right">
-                  <QRCodeDialog
-                    trigger={<Button>Gerar QRCode</Button>}
-                    data={ticket.id}
-                  />
+                  {ticket.statusTicket === "ACTIVE" ? (
+                    <QRCodeDialog
+                      trigger={<Button>Gerar QRCode</Button>}
+                      data={ticket.id}
+                    />
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))}
