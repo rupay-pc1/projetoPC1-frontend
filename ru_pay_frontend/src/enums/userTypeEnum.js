@@ -2,7 +2,7 @@ const UserTypeEnum = {
   ADMIN: "ADMIN",
   STUDENT: "STUDENT",
   SCHOLARSHIP_STUDENT: "SCHOLARSHIP_STUDENT",
-  EXTERNAL: "EXTERNAL"
+  EXTERNAL: "EXTERNAL",
 };
 
-export default UserTypeEnum
+export default UserTypeEnum;

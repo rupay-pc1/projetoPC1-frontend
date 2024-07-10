@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/lib/components/ui/alert-dialog";
+import UserTypeMapEnum from "@/enums/userTypeMapEnum";
 
 export default function UserList() {
   const [tableContent, setTableContent] = useState([]);
@@ -53,7 +54,7 @@ export default function UserList() {
         email: client.email,
         type: client.typeUser,
         registration: client.registration,
-        created_at: "20-03-2023",
+        created_at: "20/03/2023",
       };
     });
 
@@ -79,10 +80,12 @@ export default function UserList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead className="hidden sm:table-cell">Type</TableHead>
-              <TableHead className="hidden md:table-cell">Date</TableHead>
-              <TableHead className="text-right">Registration</TableHead>
+              <TableHead>Usuário</TableHead>
+              <TableHead className="hidden sm:table-cell">Tipo</TableHead>
+              <TableHead className="hidden md:table-cell">
+                Data de criação
+              </TableHead>
+              <TableHead className="text-right">Matrícula</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -100,7 +103,7 @@ export default function UserList() {
                   </div>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell">
-                  {client.type}
+                  {UserTypeMapEnum[client.type]}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {client.created_at}

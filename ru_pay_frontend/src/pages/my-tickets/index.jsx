@@ -13,6 +13,7 @@ import { formatCurrency, formatDate, orderByDate } from "@/lib/utils";
 import UserService from "@/services/UserService";
 import { useContext, useEffect, useState } from "react";
 import QRCodeDialog from "./components/QRCodeDialog";
+import statusMapEnum from "@/enums/statusMapEnum";
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -68,7 +69,7 @@ export default function MyTickets() {
                       ticket.statusTicket === "ACTIVE" ? "default" : "outline"
                     }
                   >
-                    {ticket.statusTicket}
+                    {statusMapEnum[ticket.statusTicket]}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">

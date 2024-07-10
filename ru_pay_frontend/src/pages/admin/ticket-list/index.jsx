@@ -19,27 +19,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/lib/components/ui/alert-dialog"
-
-
+} from "@/lib/components/ui/alert-dialog";
+import statusMapEnum from "@/enums/statusMapEnum";
+import ticketTypeMapEnum from "@/enums/ticketTypeMapEnum";
+import { formatCurrency } from "@/lib/utils";
 
 export default function TicketList() {
-
-  const [tableContent, setTableContent] = useState([])
-  const [modalOpen, setModalOpen] = useState(false)
+  const [tableContent, setTableContent] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(async () => {
     async function fetchData() {
       try {
         const response = await AdminService.listTickets();
-        return response
+        return response;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    } 
-    
+    }
+
     setTableContent(await fetchData());
-  }, []); 
+  }, []);
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -64,9 +64,9 @@ export default function TicketList() {
             {tableContent.map((ticket) => (
               <TableRow key={ticket.id} className="bg-accent">
                 <TableCell>{ticket.id}</TableCell>
-                <TableCell>{ticket.price}</TableCell>
-                <TableCell>{ticket.typeTicket}</TableCell>
-                <TableCell>{ticket.statusTicket}</TableCell>
+                <TableCell>{formatCurrency(ticket.price)}</TableCell>
+                <TableCell>{ticketTypeMapEnum[ticket.typeTicket]}</TableCell>
+                <TableCell>{statusMapEnum[ticket.statusTicket]}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/lib/components/ui/sheet";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useContext } from "react";
 import { useLocation } from "react-router-dom";
+import logo from "@/assets/rupay-logo.png";
 
 export default function AdminNavbar({ children, currentPath }) {
   const { pathname } = useLocation();
@@ -39,9 +40,11 @@ export default function AdminNavbar({ children, currentPath }) {
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <a href="/" className="flex items-center gap-2 font-semibold">
-              <Package2 className="h-6 w-6" />
-              <span className="">RU Pay</span>
+            <a
+              href="/"
+              className="flex m-auto items-center gap-2 font-semibold"
+            >
+              <img src={logo} width="60px" className="m-auto" alt="" />
             </a>
           </div>
           <div className="flex-1">
@@ -97,8 +100,8 @@ export default function AdminNavbar({ children, currentPath }) {
                   href="/"
                   className="flex items-center gap-2 mb-3 text-lg font-semibold"
                 >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <img src={logo} width="60px" className="m-auto" alt="" />
+                  <span className="sr-only">RU Pay</span>
                 </a>
                 <a
                   href="/"
