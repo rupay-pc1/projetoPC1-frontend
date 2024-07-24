@@ -1,9 +1,9 @@
 import apiService from './ApiService';
 
 const AdminService = {
-  async listUsers() {
+  async listUsers(params = "") {
     try {
-      const response = await apiService.get('api/user/list');
+      const response = await apiService.get(`api/user/list?${params}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao listar usuários:', error);
@@ -22,9 +22,9 @@ const AdminService = {
   },
 
 
-  async listTickets(){
+  async listTickets(params = ""){
     try{
-      const response = await apiService.get(`/api/ticket`);
+      const response = await apiService.get(`/api/ticket/list?${params}`);
       return response.data;
     } catch(error){
       console.error('Erro ao listar tickets:', error);

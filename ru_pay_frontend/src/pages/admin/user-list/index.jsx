@@ -21,44 +21,98 @@ import {
   AlertDialogTrigger,
 } from "@/lib/components/ui/alert-dialog";
 import UserTypeMapEnum from "@/enums/userTypeMapEnum";
+import { Input } from "@/lib/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/components/ui/select";
+import { Label } from "@/lib/components/ui/label";
+import UserTypeEnum from "@/enums/userTypeEnum";
+import { Button } from "@/lib/components/ui/button";
+import { formatDate, sortTableContentByDate } from "@/services/util"
+import arrow from "@/assets/arrow_down.png";
+
 
 export default function UserList() {
   const [tableContent, setTableContent] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [registration, setRegistration] = useState(null);
+
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const [sortOrder, setSortOrder] = useState('desc');
+
+  const handleSortButtonClick = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    const sortedContent = sortTableContentByDate(tableContent, newOrder);
+    setTableContent(sortedContent);
+  };
+
+  const handleValueChange = (value) => {
+    setSelectedValue(value);
+  };
+
+  const handleRegistrationChange = (event) => {
+    setRegistration(event.target.value);
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await AdminService.listUsers();
-        console.log(response);
-
-        setTableContent(response);
+        const query = mountQuery()
+        const response = await AdminService.listUsers(query);
+        setTableContent(normalizeTableContent(response));
       } catch (error) {
         console.log(error);
       }
     }
-
+  
     fetchData();
-  }, []);
+  }, [buttonClicked, selectedValue]);
+  
+  const mountQuery = () => {
+    var query = ``
+    console.log(selectedValue)
+    if (selectedValue !== null && selectedValue !== "TODOS") {
+      query += `typeUser=${selectedValue}&`
+    }
+    console.log(registration)
+    if (registration !== null && registration !== "") {
+      query += `registration=${registration}`
+    }
 
-  const normalizeTableContent = () => {
-    console.log(tableContent);
-    if (tableContent.length == 0) {
+    return query
+  }
+
+  const getRandomIndex = (max) => Math.floor(Math.random() * max);
+
+  const normalizeTableContent = (users) => {
+    if (users.length == 0) {
       return [];
     }
-    console.log(tableContent);
-    const res = tableContent.map((client) => {
+    const days = ["24", "18","07"]
+
+    const res = users.map((client) => {
+      const randomDay = days[getRandomIndex(days.length)];
+      console.log(randomDay)
+      const date = formatDate(`2024-06-${randomDay}T23:31:03.372851`)
+      console.log(date)
       return {
         id: client.id,
         name: client.name,
         email: client.email,
         type: client.typeUser,
         registration: client.registration,
-        created_at: "20/03/2023",
+        created_at: date,
       };
     });
-
-    return res;
+    return res
   };
 
   const handleClick = async (clientId) => {
@@ -68,13 +122,62 @@ export default function UserList() {
     console.log(res);
   };
 
+  const handleButtonClick = () => {
+    setButtonClicked(prev => !prev);
+  };
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex flex-col gap-2">
+      <div className="flex justify-between gap-2">
+       <div className="flex flex-col gap-2">
         <h1 className="text-lg font-semibold md:text-2xl">
-          Listagem de Usuários
-        </h1>
-        <h2> Para deletar um usuário, clique sobre ele. </h2>
+            Listagem de Usuários
+          </h1>
+          <h2> Para deletar um usuário, clique sobre ele. </h2>
+       </div>
+
+       <div className="flex gap-4">
+        <div>
+              <Label>Tipo de Usuário</Label>
+              <Select onValueChange={handleValueChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Selecionar" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value={"TODOS"}>Todos</SelectItem>
+                  <SelectItem value={UserTypeEnum.EXTERNAL}>Externo</SelectItem>
+                  <SelectItem value={UserTypeEnum.STUDENT}>Estudante</SelectItem>
+                  <SelectItem value={UserTypeEnum.SCHOLARSHIP_STUDENT}>
+                    Estudante Bolsista
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+        </div>
+              
+        <div>
+              <Label htmlFor="matricula">Matrícula</Label>
+              <Input
+                id="registration"
+                placeholder="000000000"
+                type="text"
+                autoCapitalize="none"
+                autoComplete="matricula"
+                autoCorrect="off"
+                value={registration}
+                onChange={handleRegistrationChange}
+              />
+        </div>
+        <div>
+          <Button
+            className="mt-6"
+            onClick={handleButtonClick}
+          >
+            Filtrar
+          </Button>
+        </div>
+
+       </div>
       </div>
       <div className="flex flex-1 justify-center rounded-lg border border-dashed shadow-sm p-6">
         <Table>
@@ -83,14 +186,18 @@ export default function UserList() {
               <TableHead>Usuário</TableHead>
               <TableHead className="hidden sm:table-cell">Tipo</TableHead>
               <TableHead className="hidden md:table-cell">
-                Data de criação
-              </TableHead>
+                <div className="flex gap-4 cursor-pointer" onClick={handleSortButtonClick}>
+                  <p> Data de criação </p>
+                  <img src={arrow} height="20px" width="20px" alt=""/>
+
+                </div>
+                </TableHead>
               <TableHead className="text-right">Matrícula</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {normalizeTableContent().map((client) => (
+            {tableContent.map((client) => (
               <TableRow
                 key={client.id}
                 className="bg-accent cursor-pointer"
