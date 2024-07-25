@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import AdminService from "@/services/AdminService";
 import statusMapEnum from "@/enums/statusMapEnum";
 import ticketTypeMapEnum from "@/enums/ticketTypeMapEnum";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate, sortTableContentByDateField } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -20,15 +20,17 @@ import {
 } from "@/lib/components/ui/select";
 import { Label } from "@/lib/components/ui/label";
 import { Button } from "@/lib/components/ui/button";
-import {formatDate} from "@/services/util"
+import arrow from "@/assets/arrow_down.png";
 
 export default function TicketList() {
   const [tableContent, setTableContent] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const [selectedStatus, setSelectedStatus] = useState(null)
 
   const [selectedType, setSelectedType] = useState(null)
+
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [isRotated, setIsRotated] = useState(false);
 
   const handleSelectedStatus = (value) => {
     setSelectedStatus(value);
@@ -36,6 +38,14 @@ export default function TicketList() {
 
   const handleSelectedType = (value) => {
     setSelectedType(value);
+  };
+
+  const handleSortButtonClick = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setIsRotated(!isRotated)
+    setSortOrder(newOrder);
+    const sortedContent = sortTableContentByDateField(tableContent, newOrder, "purchaseDate");
+    setTableContent(sortedContent);
   };
 
   useEffect(() => {
@@ -137,7 +147,20 @@ export default function TicketList() {
               <TableHead>Preço</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead> Data da compra </TableHead>
+              <TableHead>
+                <div className="flex gap-4 cursor-pointer" onClick={handleSortButtonClick}>
+                    <p> Data da compra  </p>
+                    <img 
+                    src={arrow} 
+                    height="20px" 
+                    width="20px" 
+                    alt="" 
+                    className={`transition-transform duration-300 ${isRotated ? 'rotate-180' : 'rotate-0'}`} />
+
+                    
+
+                  </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
 

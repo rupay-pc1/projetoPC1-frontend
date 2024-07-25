@@ -32,7 +32,9 @@ import {
 import { Label } from "@/lib/components/ui/label";
 import UserTypeEnum from "@/enums/userTypeEnum";
 import { Button } from "@/lib/components/ui/button";
-import { formatDate, sortTableContentByDate } from "@/services/util"
+
+import { formatDate, sortTableContentByDateField } from "@/lib/utils";
+
 import arrow from "@/assets/arrow_down.png";
 
 
@@ -46,11 +48,13 @@ export default function UserList() {
   const [buttonClicked, setButtonClicked] = useState(false);
 
   const [sortOrder, setSortOrder] = useState('desc');
+  const [isRotated, setIsRotated] = useState(false);
 
   const handleSortButtonClick = () => {
     const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setIsRotated(!isRotated)
     setSortOrder(newOrder);
-    const sortedContent = sortTableContentByDate(tableContent, newOrder);
+    const sortedContent = sortTableContentByDateField(tableContent, newOrder, "created_at");
     setTableContent(sortedContent);
   };
 
@@ -188,7 +192,14 @@ export default function UserList() {
               <TableHead className="hidden md:table-cell">
                 <div className="flex gap-4 cursor-pointer" onClick={handleSortButtonClick}>
                   <p> Data de criação </p>
-                  <img src={arrow} height="20px" width="20px" alt=""/>
+                  <img 
+                  src={arrow} 
+                  height="20px" 
+                  width="20px" 
+                  alt="" 
+                  className={`transition-transform duration-300 ${isRotated ? 'rotate-180' : 'rotate-0'}`} />
+
+                  
 
                 </div>
                 </TableHead>

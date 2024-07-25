@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format } from 'date-fns';
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -14,15 +15,14 @@ export function formatCurrency(value) {
   return formatter.format(value);
 }
 
-export function formatDate(date) {
-  var dia = String(date.getDate()).padStart(2, "0");
-  var mes = String(date.getMonth() + 1).padStart(2, "0");
-  var ano = date.getFullYear();
-  var horas = String(date.getHours()).padStart(2, "0");
-  var minutos = String(date.getMinutes()).padStart(2, "0");
+export const formatDate = (dateString) => {
+  if (!dateString) {
+    return '';
+  }
 
-  return dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos;
-}
+  const date = new Date(dateString);
+  return format(date, 'dd/MM/yyyy HH:mm:ss');
+};
 
 export function orderByDate(list) {
   var sortedList = list.slice(0);
@@ -35,3 +35,17 @@ export function orderByDate(list) {
 
   return sortedList;
 }
+
+
+export const sortTableContentByDateField = (content, order, dateField) => {
+  return [...content].sort((a, b) => {
+    const dateA = a[dateField] ? new Date(a[dateField].split('/').reverse().join('-')) : null;
+    const dateB = b[dateField] ? new Date(b[dateField].split('/').reverse().join('-')) : null;
+
+    if (dateA === null && dateB === null) return 0;
+    if (dateA === null) return 1;
+    if (dateB === null) return -1;
+
+    return order === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+};

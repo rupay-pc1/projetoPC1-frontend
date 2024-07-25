@@ -11,10 +11,10 @@ const UserService = {
     }
   },
 
-  async getTickets(userId) {
+  async getTickets(userId, query = "") {
     try {
       const response = await apiService.get(
-        `api/ticket/listTicketsByUserId/${userId}`,
+        `api/ticket/listTicketsByUserId/${userId}?${query}`,
       );
       return response.data;
     } catch (error) {
