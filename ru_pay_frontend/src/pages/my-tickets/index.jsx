@@ -14,7 +14,11 @@ import { useContext, useEffect, useState } from "react";
 import QRCodeDialog from "./components/QRCodeDialog";
 import statusMapEnum from "@/enums/statusMapEnum";
 import arrow from "@/assets/arrow_down.png";
-import { formatCurrency, formatDate, sortTableContentByDateField } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatDate,
+  sortTableContentByDateField,
+} from "@/lib/utils";
 import { Label } from "@/lib/components/ui/label";
 import {
   Select,
@@ -29,34 +33,43 @@ export default function MyTickets() {
 
   const { user } = useContext(AuthContext);
   const [isRotated, setIsRotated] = useState(false);
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [sortOrder, setSortOrder] = useState("desc");
 
-  const [selectedStatus, setSelectedStatus] = useState(null)
+  const [selectedStatus, setSelectedStatus] = useState(null);
 
   const handleSelectedStatus = (value) => {
     setSelectedStatus(value);
   };
 
   const handleSortButtonClick = () => {
-    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-    setIsRotated(!isRotated)
+    const newOrder = sortOrder === "asc" ? "desc" : "asc";
+    setIsRotated(!isRotated);
     setSortOrder(newOrder);
-    const sortedContent = sortTableContentByDateField(tickets, newOrder, "purchaseDate");
+    const sortedContent = sortTableContentByDateField(
+      tickets,
+      newOrder,
+      "purchaseDate",
+    );
     setTickets(sortedContent);
   };
 
   useEffect(() => {
-    async function fetchData(){
-      try{
-        const query = mountQuery()
+    async function fetchData() {
+      try {
+        const query = mountQuery();
         const response = await UserService.getTickets(user.id, query);
-        setTickets(response);
-      } catch (error){
+        const sortedContent = sortTableContentByDateField(
+          response,
+          sortOrder,
+          "purchaseDate",
+        );
+        setTickets(sortedContent);
+      } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, [user.id, selectedStatus])
+  }, [user.id, selectedStatus]);
 
   function getMealType(key) {
     if (
@@ -73,37 +86,37 @@ export default function MyTickets() {
   }
 
   const mountQuery = () => {
-    var query = ``
+    var query = ``;
     if (selectedStatus !== null && selectedStatus !== "TODOS") {
-      query += `statusTicket=${selectedStatus}&`
+      query += `statusTicket=${selectedStatus}&`;
     }
-    return query
-  }
+    return query;
+  };
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex justify-between gap-4">
         <div className="flex flex-col gap-2">
-            <h1 className="text-lg font-semibold md:text-2xl">
-              Listagem de Tickets
-            </h1>
+          <h1 className="text-lg font-semibold md:text-2xl">
+            Listagem de Tickets
+          </h1>
         </div>
         <div className="flex gap-4">
-            <div>
-                  <Label>Status</Label>
-                  <Select onValueChange={handleSelectedStatus}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Selecionar" />
-                    </SelectTrigger>
+          <div>
+            <Label>Status</Label>
+            <Select onValueChange={handleSelectedStatus}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecionar" />
+              </SelectTrigger>
 
-                    <SelectContent>
-                      <SelectItem value={"TODOS"}>Todos</SelectItem>
-                      <SelectItem value={"ACTIVE"}>Ativo</SelectItem>
-                      <SelectItem value={"INACTIVE"}>Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
-            </div>
-        </div>  
+              <SelectContent>
+                <SelectItem value={"TODOS"}>Todos</SelectItem>
+                <SelectItem value={"ACTIVE"}>Ativo</SelectItem>
+                <SelectItem value={"INACTIVE"}>Inativo</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
       <div className="flex flex-1 justify-center rounded-lg border border-dashed shadow-sm p-6">
         <Table>
@@ -113,15 +126,19 @@ export default function MyTickets() {
               <TableHead>Status</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead className="text-right">
-                <div className="flex gap-4 cursor-pointer" onClick={handleSortButtonClick}>
-                    <p> Data da compra  </p>
-                    <img 
-                    src={arrow} 
-                    height="20px" 
-                    width="20px" 
-                    alt="" 
-                    className={`transition-transform duration-300 ${isRotated ? 'rotate-180' : 'rotate-0'}`} />
-                  </div>
+                <div
+                  className="flex gap-4 cursor-pointer"
+                  onClick={handleSortButtonClick}
+                >
+                  <p> Data da compra </p>
+                  <img
+                    src={arrow}
+                    height="20px"
+                    width="20px"
+                    alt=""
+                    className={`transition-transform duration-300 ${isRotated ? "rotate-180" : "rotate-0"}`}
+                  />
+                </div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -139,9 +156,7 @@ export default function MyTickets() {
                     {statusMapEnum[ticket.statusTicket]}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  {formatCurrency(ticket.price)}
-                </TableCell>
+                <TableCell>{formatCurrency(ticket.price)}</TableCell>
                 <TableCell>
                   {ticket.purchaseDate
                     ? formatDate(new Date(ticket.purchaseDate))

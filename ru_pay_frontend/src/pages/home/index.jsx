@@ -13,11 +13,12 @@ export default function Home() {
 
   useEffect(() => {
     (async () => {
-      const result = await UserService.getAvailableTickets(user.id);
-
-      setAvailableTickets(result);
+      if (user?.id) {
+        const result = await UserService.getAvailableTickets(user?.id);
+        setAvailableTickets(result);
+      }
     })();
-  }, [user.id]);
+  }, [user?.id]);
 
   async function buyTicket(type) {
     const response = await PaymentService.makePayment({
