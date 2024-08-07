@@ -2,12 +2,22 @@ import moon from "@/assets/moon.jpg";
 import sun from "@/assets/sun.jpg";
 import { AuthContext } from "@/contexts/AuthContext";
 import PaymentService from "@/services/PaymentService";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PaymentNextSteps from "./components/PaymentNextSteps";
+import UserService from "@/services/UserService";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
   const [payment, setPayment] = useState(null);
+  const [availableTickets, setAvailableTickets] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const result = await UserService.getAvailableTickets(user.id);
+
+      setAvailableTickets(result);
+    })();
+  }, [user.id]);
 
   async function buyTicket(type) {
     const response = await PaymentService.makePayment({
@@ -42,36 +52,80 @@ export default function Home() {
             <h3 className="text-2xl font-bold tracking-tight">
               Escolha sua refeição
             </h3>
-            <div className="grid grid-cols-2 md:gap-20 sm:gap-10 gap-5">
+            <div className="grid grid-cols-2 md:gap-10 sm:gap-10 gap-5">
+              {availableTickets?.lunch === 1 ? (
+                <button
+                  className="flex flex-row gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
+                  onClick={() =>
+                    buyTicket(`${getUserType(user.typeUser)}_LUNCH_TICKET`)
+                  }
+                >
+                  <img
+                    alt="Almoço"
+                    className="aspect-square w-20 rounded-md object-cover"
+                    height="84"
+                    src={sun}
+                    width="84"
+                  />
+                  <h4 className="text-2xl font-bold tracking-tight">
+                    Almoço - Meia
+                  </h4>
+                </button>
+              ) : null}
+              {availableTickets?.dinner === 1 ? (
+                <button
+                  className="flex flex-row gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
+                  onClick={() =>
+                    buyTicket(`${getUserType(user.typeUser)}_DINNER_TICKET`)
+                  }
+                >
+                  <img
+                    alt="Jantar"
+                    className="aspect-square w-20 rounded-md object-cover"
+                    height="84"
+                    src={moon}
+                    width="84"
+                  />
+                  <h4 className="text-2xl font-bold tracking-tight">
+                    Jantar - Meia
+                  </h4>
+                </button>
+              ) : null}
+            </div>
+            <div className="grid grid-cols-2 md:gap-10 sm:gap-10 gap-5">
               <button
-                className="flex flex-col gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
+                className="flex flex-row gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
                 onClick={() =>
-                  buyTicket(`${getUserType(user.typeUser)}_LUNCH_TICKET`)
+                  buyTicket(`${getUserType("EXTERNAL")}_LUNCH_TICKET`)
                 }
               >
                 <img
                   alt="Almoço"
-                  className="aspect-square w-60 rounded-md object-cover"
+                  className="aspect-square w-20 rounded-md object-cover"
                   height="84"
                   src={sun}
                   width="84"
                 />
-                <h4 className="text-2xl font-bold tracking-tight">Almoço</h4>
+                <h4 className="text-2xl font-bold tracking-tight">
+                  Almoço - Inteira
+                </h4>
               </button>
               <button
-                className="flex flex-col gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
+                className="flex flex-row gap-4 p-5 rounded-lg transition-all border items-center hover:bg-muted"
                 onClick={() =>
-                  buyTicket(`${getUserType(user.typeUser)}_DINNER_TICKET`)
+                  buyTicket(`${getUserType("EXTERNAL")}_DINNER_TICKET`)
                 }
               >
                 <img
                   alt="Jantar"
-                  className="aspect-square w-60 rounded-md object-cover"
+                  className="aspect-square w-20 rounded-md object-cover"
                   height="84"
                   src={moon}
                   width="84"
                 />
-                <h4 className="text-2xl font-bold tracking-tight">Jantar</h4>
+                <h4 className="text-2xl font-bold tracking-tight">
+                  Jantar - Inteira
+                </h4>
               </button>
             </div>
           </div>

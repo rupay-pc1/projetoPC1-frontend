@@ -22,6 +22,21 @@ const UserService = {
       throw error;
     }
   },
+
+  async getAvailableTickets(userId) {
+    try {
+      const response = await apiService.get(
+        `api/ticket/checkUserOptions/${userId}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Erro ao buscar tickets disponíveis para o usuário:",
+        error,
+      );
+      throw error;
+    }
+  },
 };
 
 export default UserService;
